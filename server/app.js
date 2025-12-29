@@ -1,7 +1,15 @@
 const express=require ("express");
-const connectDB = require("./config/database");
-const app=express();
 require("dotenv").config();
+const connectDB = require("./config/database");
+const cookieParser = require("cookie-parser");
+
+
+
+const app=express();
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+app.use(cookieParser());
+
 
 
 
