@@ -1,1 +1,70 @@
-asd
+const userAuthModel = require("../models/userAuth.model");
+
+module.exports.userRegister = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
+      return res.status(404).json({ message: "All fields are required" });
+    }
+
+    const existinguser = await userAuthModel.findOne({ email });
+
+    if (existinguser) {
+      return res.status(404).json({ message: "User already exists" });
+    }
+    const newuser = await userAuthModel.create({
+      username,
+      email,
+      password,
+    });
+
+    if (!newuser) {
+      return res.status(404).json({ message: "Error creating user", error });
+    }
+
+    const token = jwt.sign({ userId: newuser._id }, process.env.USER_JWT_TOKEN);
+    res.cookie("token", token);
+
+    return res
+      .status(201)
+      .json({
+        message: "User registered successfully",
+        success: true,
+        user: newuser,
+      });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error in registering", error: error.message });
+  }
+};
+
+module.exports.userLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(404).json({ message: "All fields are required" });
+    }
+
+    const user = await userAuthModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(404).json({ message: "Password does not match" });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.USER_JWT_TOKEN);
+    res.cookie("token", token);
+
+    return res
+      .status(201)
+      .json({ message: "User login successfully", success: true, user: user });
+  } catch (error) {
+    return res
+      .status(404)
+      .json({ message: "Error in logging", error: error.message });
+  }
+};
