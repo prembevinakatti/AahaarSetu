@@ -26,7 +26,7 @@ module.exports.userRegister = async (req, res) => {
       { userId: newuser._id },
       process.env.USER_JWT_TOKEN
     );
-    res.cookie("usertoken", userToken);
+    res.cookie("userToken", userToken);
 
     return res.status(201).json({
       message: "User registered successfully",
@@ -58,7 +58,7 @@ module.exports.userLogin = async (req, res) => {
     }
 
     const userToken = jwt.sign({ userId: user._id }, process.env.USER_JWT_TOKEN);
-    res.cookie("usertoken", userToken);
+    res.cookie("userToken", userToken);
 
     return res
       .status(201)
