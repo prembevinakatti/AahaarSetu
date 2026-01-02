@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const userAuthSchema = new mongoose.Schema({
   profile: {
     type: mongoose.Schema.Types.ObjectId,
-    refer: "UserProfile",
+    ref: "UserProfile",
   },
   username: {
     type: String,

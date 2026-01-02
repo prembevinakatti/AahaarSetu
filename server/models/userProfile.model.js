@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const UserProfileSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    refer: "User",
+    ref: "User",
   },
   age: {
     type: Number,
