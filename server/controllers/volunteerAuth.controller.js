@@ -26,12 +26,12 @@ module.exports.registerVolunteer = async (req, res) => {
       return res.status(500).json({ message: "Failed to register volunteer" });
     }
 
-    const token = jwt.sign(
+    const volunteerToken = jwt.sign(
       { id: newVolunteer._id },
       process.env.VOLUNTEER_JWT_TOKEN
     );
 
-    res.cookie("volunteerToken", token);
+    res.cookie("volunteerToken", volunteerToken);
 
     return res.status(201).json({
       message: "Volunteer registered successfully",
