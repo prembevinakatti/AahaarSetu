@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const userAuthSchema = new mongoose.Schema({
+  profile: {
+    type: mongoose.Schema.Types.ObjectId,
+    refer: "UserProfile",
+  },
   username: {
     type: String,
     required: true,
