@@ -3,6 +3,7 @@ const UserProfileSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required:true
   },
   age: {
     type: Number,
@@ -21,5 +22,10 @@ const UserProfileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  userGeneratedId:{
+    type:String,
+    required:true,
+    unique:true
+  }
 });
 module.exports = mongoose.model("UserProfile", UserProfileSchema);
