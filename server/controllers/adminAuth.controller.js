@@ -2,9 +2,17 @@ const adminAuthModel = require("../models/adminAuth.model");
 
 module.exports.registerAdmin = async (req, res) => {
   try {
-    const { username, email, orgName, orgNumber, password } = req.body;
+    const { username, email, orgName, orgNumber, location, password } =
+      req.body;
 
-    if (!username || !email || !orgName || !orgNumber || !password) {
+    if (
+      !username ||
+      !email ||
+      !orgName ||
+      !orgNumber ||
+      !location ||
+      !password
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -27,6 +35,7 @@ module.exports.registerAdmin = async (req, res) => {
       email,
       orgName,
       orgNumber,
+      location,
       password,
     });
 
@@ -35,7 +44,7 @@ module.exports.registerAdmin = async (req, res) => {
     }
 
     const adminToken = jwt.sign(
-      { userId: newAdmin._id },
+      { adminId: newAdmin._id },
       process.env.ADMIN_JWT_TOKEN
     );
     res.cookie("token", adminToken);

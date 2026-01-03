@@ -7,7 +7,7 @@ const generateUserId = async () => {
   while (exists) {
     const randomNumber = Math.floor(100 + Math.random() * 900);
 
-    userGeneratedId = `USER${randonNumber}`;
+    userGeneratedId = `USER${randomNumber}`;
 
     const existing = await userProfileModel.findOne({ userGeneratedId });
 

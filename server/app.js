@@ -2,15 +2,21 @@ const express = require("express");
 require("dotenv").config();
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
-const userAuth=require("./routes/userAuth.routes");
+const userAuth = require("./routes/userAuth.routes");
+const adminAuth = require("./routes/adminAuth.route");
 const volunteerAuth = require("./routes/volunteerAuth.route");
+const volunteerProfile = require("./routes/volunteerProfile.route");
+const verifyRoute = require("./routes/verify.route");
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/user/auth",userAuth)
+app.use("/api/user/auth", userAuth);
+app.use("/api/user/admin", adminAuth);
 app.use("/api/volunteer/auth", volunteerAuth);
+app.use("/api/volunteer/profile", volunteerProfile);
+app.use("/api/admin/verify", verifyRoute);
 
 app.use(cookieParser());
 
