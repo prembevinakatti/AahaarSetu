@@ -13,7 +13,7 @@ const Navbar = () => {
           <img
             src={logo}
             alt="AahaarSetu Logo"
-            className="w-10 h-10 object-contain"
+            className="w-20 h-20 object-contain"
           />
           <span className="text-xl font-bold tracking-tight text-green-700">
             AahaarSetu
