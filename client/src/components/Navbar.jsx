@@ -1,19 +1,18 @@
-import React from "react"
-import logo from "../assets/aahaarsetu-logo.png"
-import { Button } from "@/components/ui/button"
-import { MapPin, UserPlus, ShieldAlert } from "lucide-react"
+import React from "react";
+import logo from "../assets/AahaarSetu.png";
+import { Button } from "@/components/ui/button";
+import { MapPin, UserPlus, ShieldAlert } from "lucide-react";
 
 const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-white/70 border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-
+      <div className="max-w-7xl mx-auto px-6 py-1 flex items-center justify-between">
         {/* Logo + Name */}
         <div className="flex items-center gap-3">
           <img
             src={logo}
             alt="AahaarSetu Logo"
-            className="w-20 h-20 object-contain"
+            className="w-18 h-18 object-contain"
           />
           <span className="text-xl font-bold tracking-tight text-green-700">
             AahaarSetu
@@ -35,10 +34,7 @@ const Navbar = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            className="hidden md:flex gap-2"
-          >
+          <Button variant="outline" className="hidden md:flex gap-2">
             <UserPlus size={18} />
             Join
           </Button>
@@ -48,10 +44,9 @@ const Navbar = () => {
             Crisis Mode
           </Button>
         </div>
-
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
