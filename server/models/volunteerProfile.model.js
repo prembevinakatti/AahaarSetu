@@ -12,7 +12,7 @@ const volunteerProfileSchema = new mongoose.Schema({
   },
   availabilityStatus: {
     type: String,
-    enum: ["AVAILABLE", "BUSY", "OFFLINE"],
+    enum: ["AVAILABLE", "OFFLINE"],
     default: "AVAILABLE",
   },
   associatedOrganization: {
