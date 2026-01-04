@@ -25,34 +25,34 @@ const LandingPage = () => {
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
 
           {/* Badge */}
-          <div className="flex justify-center mb-6">
+          {/* <div className="flex justify-center mb-6">
             <Badge className="bg-green-100 text-green-800 px-4 py-1 text-sm">
               Crisis Response Platform
             </Badge>
-          </div>
+          </div> */}
 
           {/* Hero Section */}
           <div className="text-center space-y-6">
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-6xl md:text-6xl font-bold tracking-tight text-amber-500">
               <span className="text-green-600">AahaarSetu</span>
               <br />
               Bridging Hunger During Crises
             </h1>
 
-            <p className="max-w-2xl mx-auto text-lg text-gray-600">
+            <p className="max-w-5xl mx-auto text-lg text-gray-700">
               When disasters strike, information saves lives.
               AahaarSetu connects people to{" "}
-              <span className="font-semibold text-gray-800">
+              <span className="font-semibold text-gray-700">
                 safe, verified food distribution points
               </span>{" "}
               in real time.
             </p>
 
             <div className="flex justify-center gap-4 mt-6">
-              <Button size="lg" className="bg-green-600 hover:bg-green-700">
+              <Button size="lg" className="bg-green-500 hover:bg-green-700">
                 Find Food Near Me
               </Button>
-              <Button size="lg" variant="outline">
+              <Button size="lg" className="bg-amber-500 hover:bg-amber-500">
                 Become a Volunteer
               </Button>
             </div>
@@ -63,7 +63,7 @@ const LandingPage = () => {
 
             <Card className="backdrop-blur-sm bg-white/70 border-none shadow-lg">
               <CardContent className="p-6 space-y-4">
-                <MapPin className="w-10 h-10 text-green-600" />
+                <MapPin className="w-10 h-10 text-amber-600" />
                 <h3 className="text-xl font-semibold">Live Food Map</h3>
                 <p className="text-gray-600">
                   Discover nearby community kitchens, NGO food points, and relief camps on an interactive map.
@@ -73,7 +73,7 @@ const LandingPage = () => {
 
             <Card className="backdrop-blur-sm bg-white/70 border-none shadow-lg">
               <CardContent className="p-6 space-y-4">
-                <ShieldCheck className="w-10 h-10 text-amber-600" />
+                <ShieldCheck className="w-10 h-10 text-green-600" />
                 <h3 className="text-xl font-semibold">Verified & Safe</h3>
                 <p className="text-gray-600">
                   All food points go through NGO or admin verification to ensure safety and authenticity.

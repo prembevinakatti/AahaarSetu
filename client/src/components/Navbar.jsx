@@ -20,7 +20,7 @@ const Navbar = () => {
         </div>
 
         {/* Nav Links */}
-        <div className="hidden md:flex items-center gap-8 text-gray-700 font-medium">
+        {/* <div className="hidden md:flex items-center gap-8 text-gray-700 font-medium">
           <a href="#map" className="hover:text-green-600 transition">
             Food Map
           </a>
@@ -30,10 +30,10 @@ const Navbar = () => {
           <a href="#about" className="hover:text-green-600 transition">
             About
           </a>
-        </div>
+        </div> */}
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3">
           <Button variant="outline" className="hidden md:flex gap-2">
             <UserPlus size={18} />
             Join
@@ -43,7 +43,7 @@ const Navbar = () => {
             <ShieldAlert size={18} />
             Crisis Mode
           </Button>
-        </div>
+        </div> */}
       </div>
     </nav>
   );
