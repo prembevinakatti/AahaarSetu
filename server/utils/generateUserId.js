@@ -17,4 +17,4 @@ const generateUserId = async () => {
   return userGeneratedId;
 };
 
-module.exports = userGeneratedId;
+module.exports = generateUserId;
