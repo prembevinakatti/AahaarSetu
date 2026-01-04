@@ -14,8 +14,8 @@ const Navbar = () => {
             alt="AahaarSetu Logo"
             className="w-18 h-18 object-contain"
           />
-          <span className="text-xl font-bold tracking-tight text-green-700">
-            AahaarSetu
+          <span className="text-xl font-bold tracking-tight text-orange-500">
+            Aahaar<span className="text-green-700">Setu</span>
           </span>
         </div>
 

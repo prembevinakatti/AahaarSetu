@@ -7,6 +7,10 @@ const volunteerProfileSchema = new mongoose.Schema(
       ref: "VolunteerAuth",
       required: true,
     },
+    orgName: {
+      type: String,
+      required: true,
+    },
     currentArea: {
       type: String,
       required: true,
@@ -25,7 +29,7 @@ const volunteerProfileSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    isVerfied: {
+    isVerified: {
       type: Boolean,
       default: false,
     },

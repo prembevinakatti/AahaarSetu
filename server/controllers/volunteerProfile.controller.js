@@ -4,12 +4,13 @@ const generateVolunteerId = require("../utils/generateVolunteerId");
 
 module.exports.createVolunteerProfile = async (req, res) => {
   try {
-    const { currentArea, associatedOrganization } = req.body;
+    const { currentArea, orgName, availabilityStatus } = req.body;
     const volunteer = req.volunteer;
 
-    if (!currentArea || !associatedOrganization) {
+    if (!currentArea || !orgName || !availabilityStatus) {
       return res.status(400).json({
-        message: "Current area and associated organization are required",
+        message:
+          "Current area and organization name and availability status are required",
       });
     }
 
@@ -33,7 +34,8 @@ module.exports.createVolunteerProfile = async (req, res) => {
     const newVolunteerProfile = await volunteerProfileModel.create({
       volunteer,
       currentArea,
-      associatedOrganization,
+      orgName,
+      availabilityStatus,
       volunteerId: volunteerId,
     });
 
