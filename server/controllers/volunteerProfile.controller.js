@@ -1,3 +1,4 @@
+const volunteerAuthModel = require("../models/volunteerAuth.model");
 const volunteerProfileModel = require("../models/volunteerProfile.model");
 const generateVolunteerId = require("../utils/generateVolunteerId");
 
@@ -41,6 +42,10 @@ module.exports.createVolunteerProfile = async (req, res) => {
         .status(500)
         .json({ message: "Failed to create volunteer profile" });
     }
+
+    const volunteerAuth = await volunteerAuthModel.findById(volunteer);
+    volunteerAuth.volunteerProfile = newVolunteerProfile._id;
+    await volunteerAuth.save();
 
     return res.status(201).json({
       message: "Volunteer profile created successfully",

@@ -21,6 +21,10 @@ const volunteerAuthSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    volunteerProfile: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "VolunteerProfile",
+    },
   },
   { timestamps: true }
 );
