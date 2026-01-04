@@ -54,17 +54,6 @@ const foodPoint = new mongoose.Schema(
       enum: ["AVAILABLE", "LIMITED", "OUT_OF_STOCK"],
       default: "AVAILABLE",
     },
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
-    verifiedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "AdminAuth",
-    },
-    verifiedAt: {
-      type: Date,
-    },
     addedByVolunteer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "VolunteerAuth",
