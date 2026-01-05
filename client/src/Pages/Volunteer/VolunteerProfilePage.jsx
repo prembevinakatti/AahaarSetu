@@ -38,13 +38,13 @@ const VolunteerProfilePage = () => {
       <Navbar />
 
       {/* Background */}
-      <div className="min-h-screen pt-28 bg-gradient-to-br from-sky-50 via-white to-amber-50 flex items-center justify-center relative overflow-hidden">
+      <div className="min-h-screen pt-28 bg-gradient-to-br from-green-50 via-white to-amber-50 flex items-center justify-center relative overflow-hidden">
 
         {/* Soft Grid */}
         <div className="absolute inset-0 bg-[radial-gradient(#d4d4d4_1px,transparent_1px)] [background-size:30px_30px] opacity-20" />
 
-        {/* Sky-Blue Glow */}
-        <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-sky-300/30 blur-3xl rounded-full" />
+        {/* Green Glow */}
+        <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-green-300/30 blur-3xl rounded-full" />
         <div className="absolute bottom-1/3 right-1/4 w-72 h-72 bg-amber-300/20 blur-3xl rounded-full" />
 
         {/* Profile Card */}
@@ -53,7 +53,7 @@ const VolunteerProfilePage = () => {
 
             {/* Header */}
             <div className="text-center space-y-2">
-              <HandHeart className="w-12 h-12 mx-auto text-sky-600" />
+              <HandHeart className="w-12 h-12 mx-auto text-green-700" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Volunteer Profile
               </h2>
@@ -89,11 +89,10 @@ const VolunteerProfilePage = () => {
                   className="pl-10 pr-10"
                 />
 
-                {/* Current Location Icon */}
                 <button
                   type="button"
                   onClick={handleGetLocation}
-                  className="absolute right-3 top-2.5 text-sky-600 hover:text-sky-700"
+                  className="absolute right-3 top-2.5 text-green-700 hover:text-green-800"
                   title="Use current location"
                 >
                   <LocateFixed className="w-5 h-5" />
@@ -101,7 +100,7 @@ const VolunteerProfilePage = () => {
               </div>
             </div>
 
-            {/* Availability Status */}
+            {/* Availability */}
             <div>
               <Label>Availability Status</Label>
               <div className="relative mt-1">
@@ -118,18 +117,16 @@ const VolunteerProfilePage = () => {
             </div>
 
             {/* Save Button */}
-            <Button className="w-full bg-sky-500 hover:bg-sky-600 text-white">
+            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
               Save Profile
             </Button>
 
-            {/* Footer */}
             <p className="text-xs text-center text-gray-500">
               Keeping your profile updated helps efficient crisis coordination.
             </p>
 
           </CardContent>
         </Card>
-
       </div>
     </>
   )
