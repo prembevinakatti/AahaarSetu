@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const crisesModeSchema = new mongoose.Schema({
+const crisisModeSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: false,
@@ -29,4 +29,4 @@ const crisesModeSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("CrisesMode", crisesModeSchema);
+module.exports = mongoose.model("CrisisMode", crisisModeSchema);
