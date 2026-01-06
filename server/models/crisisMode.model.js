@@ -10,7 +10,7 @@ const crisisModeSchema = new mongoose.Schema({
     type: String,
   },
 
-  loaction: {
+  location: {
     type: String,
     required: true,
   },
