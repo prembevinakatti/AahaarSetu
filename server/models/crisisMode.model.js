@@ -20,7 +20,7 @@ const crisisModeSchema = new mongoose.Schema({
     ref: "AdminAuth",
   },
 
-  activatedBy: {
+  activatedAt: {
     type: Date,
   },
 

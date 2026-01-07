@@ -40,3 +40,56 @@ module.exports.activateCrisisMode = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+module.exports.deactivateCrisisMode = async (req, res) => {
+  try {
+    const { admin } = req.admin;
+
+    if (!admin) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const crisis = await crisisModeModel.findOne({ activatedBy: admin });
+
+    if (!crisis || !crisis.isActive) {
+      return res.status(400).json({ message: "Crisis mode is not active" });
+    }
+    crisis.isActive = false;
+    crisis.deactivateAt = new Date();
+    await crisis.save();
+
+    return res.status(200).json({
+      message: "Crisis mode deactivated successfully",
+      success: true,
+      crisis,
+    });
+  } catch (error) {
+    console.error("Error deactivating crisis mode:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports.getCrisisModeStatus = async (req, res) => {
+  try {
+    const admin = req.admin;
+
+    if (!admin) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const crisis = await crisisModeModel.findOne({ activatedBy: admin });
+
+    if (!crisis) {
+      return res.status(404).json({ message: "No crisis mode record found" });
+    }
+
+    return res.status(200).json({
+      message: "Crisis mode status fetched successfully",
+      success: true,
+      crisis: crisis,
+    });
+  } catch (error) {
+    console.error("Error fetching crisis mode status:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
