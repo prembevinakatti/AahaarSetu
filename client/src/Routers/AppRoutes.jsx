@@ -1,13 +1,16 @@
 import LandingPage from '@/components/LandingPage'
 import AdminLoginPage from '@/Pages/Admin/AdminLoginPage'
 import AdminRegisterPage from '@/Pages/Admin/AdminRegisterPage'
+import AdminDashboard from '@/Pages/AdminDashboard'
 import HomePage from '@/Pages/HomePage'
 import UserLoginPage from '@/Pages/User/UserLoginPage'
 import UserProfilePage from '@/Pages/User/UserProfilePage'
 import UserRegisterPage from '@/Pages/User/UserRegisterPage'
+import UserDashboard from '@/Pages/UserDashboard'
 import VolunteerLoginPage from '@/Pages/Volunteer/VolunteerLoginPage'
 import VolunteerProfilePage from '@/Pages/Volunteer/VolunteerProfilePage'
 import VolunteerRegisterPage from '@/Pages/Volunteer/VolunteerRegisterPage'
+import VolunteerDashboard from '@/Pages/VolunteerDashboard'
 import React from 'react'
 import { Route,Routes } from 'react-router-dom'
 
@@ -26,6 +29,9 @@ const AppRoutes = () => {
             <Route path='/UserProfile' element={<UserProfilePage/>}/>
             <Route path='/VolunteerProfile' element={<VolunteerProfilePage/>}/>
             <Route path='/HomePage' element={<HomePage/>}/>
+            <Route path='/AdminDashboard' element={<AdminDashboard/>}/>
+            <Route path='/UserDashboard' element={<UserDashboard/>}/>
+            <Route path="/VolunteerDashboard" element={<VolunteerDashboard/>}/>
         </Routes>
        
    
