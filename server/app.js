@@ -1,6 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 const connectDB = require("./config/database");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const userAuth = require("./routes/userAuth.routes");
 const adminAuth = require("./routes/adminAuth.route");
@@ -9,10 +10,17 @@ const volunteerProfile = require("./routes/volunteerProfile.route");
 const verifyRoute = require("./routes/verify.route");
 const foodRoute = require("./routes/foodPoint.route");
 const userProfile = require("./routes/userProfile.route");
+const crisisModeRoute = require("./routes/crisisMode.route");
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true,
+};
+app.cors(corsOptions);
 
 app.use("/api/user/auth", userAuth);
 app.use("/api/user/admin", adminAuth);
@@ -20,7 +28,8 @@ app.use("/api/volunteer/auth", volunteerAuth);
 app.use("/api/volunteer/profile", volunteerProfile);
 app.use("/api/admin/verify", verifyRoute);
 app.use("/api/volunteer/verify", foodRoute);
-app.use("/api/user/profile",userProfile);
+app.use("/api/user/profile", userProfile);
+app.use("/api/admin/crisisMode", crisisModeRoute);
 
 app.use(cookieParser());
 
