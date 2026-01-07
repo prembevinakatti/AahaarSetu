@@ -9,32 +9,65 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MapPin, UtensilsCrossed, Clock, X } from "lucide-react"
 
-/* ---------- CUSTOM ICONS ---------- */
+/* ---------- UBER-STYLE PIN FACTORY ---------- */
 
-// Community Kitchen
-const kitchenIcon = new L.DivIcon({
-  html: `<div class="w-4 h-4 bg-green-600 rounded-full border-4 border-green-300"></div>`,
-  className: "",
-})
+const createPin = (color, pulse = false) =>
+  new L.DivIcon({
+    className: "",
+    html: `
+      <div style="
+        position: relative;
+        width: 26px;
+        height: 26px;
+        background: ${color};
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+      ">
+        <div style="
+          position: absolute;
+          top: 6px;
+          left: 6px;
+          width: 8px;
+          height: 8px;
+          background: white;
+          border-radius: 50%;
+        "></div>
 
-// Packed Food / NGO
-const ngoIcon = new L.DivIcon({
-  html: `<div class="w-4 h-4 bg-amber-500 rotate-45"></div>`,
-  className: "",
-})
+        ${
+          pulse
+            ? `<span style="
+                position:absolute;
+                width:40px;
+                height:40px;
+                background:${color};
+                border-radius:50%;
+                opacity:0.3;
+                top:-7px;
+                left:-7px;
+                animation:pulse 1.5s infinite;
+              "></span>`
+            : ""
+        }
+      </div>
 
-// Urgent / Limited
-const urgentIcon = new L.DivIcon({
-  html: `
-    <div class="relative">
-      <div class="absolute animate-ping w-6 h-6 bg-red-400 rounded-full opacity-75"></div>
-      <div class="w-4 h-4 bg-red-600 rounded-full"></div>
-    </div>
-  `,
-  className: "",
-})
+      <style>
+        @keyframes pulse {
+          0% { transform: scale(0.5); opacity: 0.6; }
+          100% { transform: scale(1.6); opacity: 0; }
+        }
+      </style>
+    `,
+    iconSize: [26, 26],
+    iconAnchor: [13, 26],
+  })
 
-/* ---------- SAMPLE FOOD POINTS ---------- */
+/* ---------- ICONS ---------- */
+const kitchenPin = createPin("#16a34a") // green
+const ngoPin = createPin("#f59e0b") // amber
+const urgentPin = createPin("#dc2626", true) // red + pulse
+
+/* ---------- FOOD POINTS ---------- */
 const foodPoints = [
   {
     id: 1,
@@ -68,10 +101,10 @@ const foodPoints = [
   },
 ]
 
-const getIcon = (type) => {
-  if (type === "KITCHEN") return kitchenIcon
-  if (type === "NGO") return ngoIcon
-  if (type === "URGENT") return urgentIcon
+const getPin = (type) => {
+  if (type === "KITCHEN") return kitchenPin
+  if (type === "NGO") return ngoPin
+  if (type === "URGENT") return urgentPin
 }
 
 /* ---------- COMPONENT ---------- */
@@ -100,7 +133,7 @@ const HomePage = () => {
             <Marker
               key={point.id}
               position={[point.lat, point.lng]}
-              icon={getIcon(point.type)}
+              icon={getPin(point.type)}
               eventHandlers={{
                 click: () => setSelected(point),
               }}
@@ -108,7 +141,7 @@ const HomePage = () => {
           ))}
         </MapContainer>
 
-        {/* SLIDE-IN SIDEBAR */}
+        {/* SIDEBAR – ONLY WHEN CLICKED */}
         {selected && (
           <div className="absolute top-20 right-0 w-full md:w-96 h-[calc(100%-5rem)] bg-white/95 backdrop-blur-lg shadow-2xl z-[1000] animate-in slide-in-from-right">
 
