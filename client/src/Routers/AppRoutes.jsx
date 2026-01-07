@@ -1,6 +1,7 @@
 import LandingPage from '@/components/LandingPage'
 import AdminLoginPage from '@/Pages/Admin/AdminLoginPage'
 import AdminRegisterPage from '@/Pages/Admin/AdminRegisterPage'
+import HomePage from '@/Pages/HomePage'
 import UserLoginPage from '@/Pages/User/UserLoginPage'
 import UserProfilePage from '@/Pages/User/UserProfilePage'
 import UserRegisterPage from '@/Pages/User/UserRegisterPage'
@@ -24,6 +25,7 @@ const AppRoutes = () => {
             <Route path='/VolunteerRegister' element={<VolunteerRegisterPage/>}/>
             <Route path='/UserProfile' element={<UserProfilePage/>}/>
             <Route path='/VolunteerProfile' element={<VolunteerProfilePage/>}/>
+            <Route path='/HomePage' element={<HomePage/>}/>
         </Routes>
        
    
