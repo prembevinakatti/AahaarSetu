@@ -1,124 +1,137 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import Navbar from "@/components/Navbar";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import React from "react"
+import Navbar from "@/components/Navbar"
 import {
+  User,
+  Phone,
   MapPin,
   UtensilsCrossed,
   Clock,
-  Phone,
-  User,
-  Hash,
-} from "lucide-react";
+  Hash
+} from "lucide-react"
 
 const UserDashboard = () => {
-  const navigate = useNavigate();
-
   return (
     <>
       <Navbar />
 
-      <div className="min-h-screen pt-24 bg-gradient-to-br from-amber-50 via-white to-amber-100 px-6 md:px-12">
-        {/* WELCOME */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-amber-600">
-            Welcome, Rahul 👋
-          </h1>
-          <p className="text-gray-600 flex items-center gap-2">
-            <MapPin size={16} /> KR Puram, Bengaluru
-          </p>
+      {/* PAGE BELOW NAVBAR */}
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-amber-100 pt-20">
+        <div className="max-w-6xl mx-auto px-8 py-6 flex flex-col gap-6">
+
+          {/* WELCOME SECTION */}
+          <section className="bg-white border-l-4 border-amber-500 rounded-lg px-6 py-4 shadow-sm">
+            <h1 className="text-2xl font-bold text-amber-600">
+              Welcome, Rahul 👋
+            </h1>
+            <p className="text-gray-600 mt-1 flex items-center gap-1">
+              <MapPin size={14} /> KR Puram, Bengaluru
+            </p>
+          </section>
+
+          {/* MAIN CONTENT */}
+          <section className="grid grid-cols-12 gap-6">
+
+            {/* LEFT — USER INFORMATION */}
+            <div className="col-span-5 bg-white rounded-xl shadow-sm p-6 flex flex-col gap-5">
+
+              <div className="flex items-center gap-2 text-amber-600">
+                <User />
+                <h2 className="text-lg font-semibold">
+                  User Information
+                </h2>
+              </div>
+
+              <InfoRow
+                icon={<User />}
+                label="Age & Gender"
+                value="24 · Male"
+              />
+
+              <InfoRow
+                icon={<Phone />}
+                label="Contact Number"
+                value="9998887776"
+              />
+
+              <InfoRow
+                icon={<Hash />}
+                label="User ID"
+                value="USR-1029"
+              />
+
+            </div>
+
+            {/* RIGHT — FOOD STATUS */}
+            <div className="col-span-7 bg-white rounded-xl shadow-sm p-6 flex flex-col gap-6">
+
+              <div className="flex items-center gap-2 text-amber-600">
+                <UtensilsCrossed />
+                <h2 className="text-lg font-semibold">
+                  Food Availability Near You
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-2 gap-x-10 gap-y-6">
+
+                <StatusItem
+                  label="Nearest Food Point"
+                  value="1.2 km away"
+                />
+
+                <StatusItem
+                  label="Current Status"
+                  value="Available"
+                  highlight
+                />
+
+                <StatusItem
+                  label="Next Distribution Time"
+                  value="12:30 PM"
+                  icon={<Clock size={16} />}
+                />
+
+                <StatusItem
+                  label="Food Source"
+                  value="Community Kitchen"
+                />
+
+              </div>
+
+            </div>
+
+          </section>
+
         </div>
-
-        {/* FOOD STATUS */}
-        <Card className="mb-8 p-6 bg-white/95 backdrop-blur shadow-lg border-none">
-          <div className="flex items-center gap-4 mb-4">
-            <UtensilsCrossed className="text-amber-500" />
-            <h2 className="text-xl font-semibold">Food Available Near You</h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-4 text-gray-700">
-            <div>
-              <p className="text-sm">Nearest Food Point</p>
-              <p className="font-bold">1.2 km away</p>
-            </div>
-
-            <div>
-              <p className="text-sm">Status</p>
-              <p className="font-bold text-green-600">Available</p>
-            </div>
-
-            <div>
-              <p className="text-sm">Next Distribution</p>
-              <p className="font-bold flex items-center gap-1">
-                <Clock size={16} /> 12:30 PM
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        {/* QUICK ACTIONS */}
-        {/* <div className="grid md:grid-cols-3 gap-4 mb-10">
-
-          <Button
-            className="bg-amber-500 hover:bg-amber-600 text-white"
-            onClick={() => navigate("/map")}
-          >
-            <MapPin className="mr-2" />
-            View Food Map
-          </Button>
-
-          <Button variant="outline">
-            <UtensilsCrossed className="mr-2" />
-            Request Assistance
-          </Button>
-
-          <Button variant="outline">
-            <Phone className="mr-2" />
-            Emergency Contact
-          </Button>
-
-        </div> */}
-
-        {/* PROFILE INFO */}
-        {/* PROFILE INFO */}
-        <Card className="p-6 bg-white/95 backdrop-blur shadow-lg border-none">
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-4">
-            <User className="text-amber-500" />
-            <h2 className="text-xl font-semibold">Your Information</h2>
-          </div>
-
-          {/* Content */}
-          <div className="grid md:grid-cols-3 gap-4 text-gray-700">
-            <div>
-              <p className="text-sm text-gray-500">Age & Gender</p>
-              <p className="font-bold flex items-center gap-2">
-                <User size={16} className="text-amber-500" />
-                24 · Male
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm text-gray-500">Contact</p>
-              <p className="font-bold flex items-center gap-2">
-                <Phone size={16} className="text-amber-500" />
-                9998887776
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm text-gray-500">User ID</p>
-              <p className="font-bold flex items-center gap-2">
-                <Hash size={16} className="text-amber-500" />
-                USR-1029
-              </p>
-            </div>
-          </div>
-        </Card>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default UserDashboard;
+/* ---------- HELPER COMPONENTS ---------- */
+
+const InfoRow = ({ icon, label, value }) => (
+  <div className="flex items-start gap-3">
+    <div className="text-amber-500 mt-0.5">{icon}</div>
+    <div>
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="font-semibold text-gray-900">{value}</p>
+    </div>
+  </div>
+)
+
+const StatusItem = ({ label, value, icon, highlight }) => (
+  <div>
+    <p className="text-sm text-gray-500 flex items-center gap-2">
+      {icon} {label}
+    </p>
+    <p
+      className={`text-xl font-bold ${
+        highlight ? "text-grren-600" : "text-gray-900"
+      }`}
+    >
+      {value}
+    </p>
+  </div>
+)
+
+export default UserDashboard
