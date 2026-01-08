@@ -1,9 +1,14 @@
 import React, { useState } from "react"
 import Navbar from "@/components/Navbar"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import {
+  HandHeart,
+  Mail,
+  Phone,
+  MapPin,
+  Activity,
+  CheckCircle
+} from "lucide-react"
 import { Switch } from "@/components/ui/switch"
-import { Phone, Mail, MapPin, Activity, CheckCircle } from "lucide-react"
 
 const VolunteerDashboard = () => {
   const [available, setAvailable] = useState(true)
@@ -12,60 +17,142 @@ const VolunteerDashboard = () => {
     <>
       <Navbar />
 
-      <div className="min-h-screen pt-24 bg-green-50 px-8">
-        <h1 className="text-3xl font-bold text-green-600 mb-6">
-          Volunteer Service Dashboard
-        </h1>
+      {/* PAGE STARTS BELOW NAVBAR */}
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 pt-20">
+        <div className="max-w-6xl mx-auto px-8 py-6 flex flex-col gap-6">
 
-        <div className="grid md:grid-cols-4 gap-6">
+          {/* WELCOME SECTION */}
+          <section className="bg-white border-l-4 border-green-600 rounded-lg px-6 py-4 shadow-sm">
+            <h1 className="text-2xl font-bold text-green-600">
+              Welcome, Volunteer
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Service and availability control panel
+            </p>
+          </section>
 
-          <Card className="md:col-span-2">
-            <CardContent className="p-6 space-y-2">
-              <h2 className="text-xl font-semibold">Volunteer Details</h2>
-              <p>Email: volunteer@mail.com</p>
-              <p>Phone: 9876543210</p>
-              <p>Organization: Helping Hands NGO</p>
-              <p>Location: Whitefield</p>
-            </CardContent>
-          </Card>
+          {/* MAIN CONTENT */}
+          <section className="grid grid-cols-12 gap-6">
 
-          <Card>
-            <CardContent className="p-6 text-center">
-              <p className="font-semibold">Availability</p>
-              <Switch checked={available} onCheckedChange={setAvailable} />
-              <p className="mt-2 text-green-600">
-                {available ? "AVAILABLE" : "OFFLINE"}
-              </p>
-            </CardContent>
-          </Card>
+            {/* LEFT — VOLUNTEER INFO */}
+            <div className="col-span-5 bg-white rounded-xl shadow-sm p-6 flex flex-col gap-5">
 
-          <Card>
-            <CardContent className="p-6 text-center">
-              <CheckCircle className="mx-auto text-green-600" />
-              <Badge className="mt-2 bg-green-600">Verified</Badge>
-            </CardContent>
-          </Card>
+              <div className="flex items-center gap-2 text-green-600">
+                <HandHeart />
+                <h2 className="text-lg font-semibold">
+                  Volunteer Information
+                </h2>
+              </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <Activity className="text-green-600" />
-              <p>Total Distributions</p>
-              <h2 className="text-2xl font-bold">128</h2>
-            </CardContent>
-          </Card>
+              <InfoRow
+                icon={<Mail />}
+                label="Email Address"
+                value="volunteer@mail.com"
+              />
 
-          <Card>
-            <CardContent className="p-6">
-              <MapPin className="text-green-600" />
-              <p>Last Active</p>
-              <p>Today</p>
-            </CardContent>
-          </Card>
+              <InfoRow
+                icon={<Phone />}
+                label="Phone Number"
+                value="9876543210"
+              />
+
+              <InfoRow
+                icon={<MapPin />}
+                label="Current Location"
+                value="Whitefield"
+              />
+
+              <InfoRow
+                icon={<Activity />}
+                label="Associated Organization"
+                value="Helping Hands NGO"
+              />
+
+            </div>
+
+            {/* RIGHT — SERVICE STATUS */}
+            <div className="col-span-7 bg-white rounded-xl shadow-sm p-6 flex flex-col gap-6">
+
+              <div className="flex items-center gap-2 text-green-600">
+                <Activity />
+                <h2 className="text-lg font-semibold">
+                  Service Status Overview
+                </h2>
+              </div>
+
+              {/* STATUS GRID */}
+              <div className="grid grid-cols-2 gap-x-10 gap-y-6">
+
+                <StatusItem
+                  label="Availability Status"
+                  value={available ? "AVAILABLE" : "OFFLINE"}
+                  highlight
+                />
+
+                <div>
+                  <p className="text-sm text-gray-500">
+                    Toggle Availability
+                  </p>
+                  <Switch
+                    checked={available}
+                    onCheckedChange={setAvailable}
+                    className="mt-2"
+                  />
+                </div>
+
+                <StatusItem
+                  label="Verification Status"
+                  value="Verified"
+                  icon={<CheckCircle className="text-green-600" size={18} />}
+                />
+
+                <StatusItem
+                  label="Total Distributions"
+                  value="128"
+                />
+
+                <StatusItem
+                  label="Last Active"
+                  value="Today"
+                />
+
+              </div>
+
+            </div>
+
+          </section>
 
         </div>
       </div>
     </>
   )
 }
+
+/* ---------- HELPERS ---------- */
+
+const InfoRow = ({ icon, label, value }) => (
+  <div className="flex items-start gap-3">
+    <div className="text-green-600 mt-0.5">{icon}</div>
+    <div>
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="font-semibold text-gray-900">{value}</p>
+    </div>
+  </div>
+)
+
+const StatusItem = ({ label, value, icon, highlight }) => (
+  <div>
+    <p className="text-sm text-gray-500 flex items-center gap-2">
+      {icon} {label}
+    </p>
+    <p
+      className={`text-xl font-bold ${
+        highlight ? "text-green-600" : "text-gray-900"
+      }`}
+    >
+      {value}
+    </p>
+  </div>
+)
 
 export default VolunteerDashboard
