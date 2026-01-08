@@ -121,3 +121,55 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+/* ---------------- CRISIS MODE THEME ---------------- */
+
+body.crisis-mode {
+  background-color: #fff5f5;
+  color: #7f1d1d;
+}
+
+/* Navbar */
+body.crisis-mode nav {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 3px solid #dc2626;
+}
+
+/* Buttons */
+body.crisis-mode .crisis-primary {
+  background-color: #dc2626 !important;
+  color: white !important;
+}
+
+body.crisis-mode .crisis-outline {
+  border-color: #dc2626 !important;
+  color: #dc2626 !important;
+}
+
+/* Emergency badge */
+.emergency-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #dc2626;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.emergency-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
