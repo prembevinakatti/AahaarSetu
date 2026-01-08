@@ -35,6 +35,10 @@ module.exports.createUserProfile = async (req, res) => {
       return res.status(500).json({ message: "Failed to create User Profile" });
     }
 
+    const userAuth = await userAuthModel.findById(userId);
+    userAuth.userProfile = newUserProfile._id;
+    await userAuth.save();
+
     return res.status(201).json({
       message: "User Profile created successfully",
       success: true,
@@ -93,19 +97,15 @@ module.exports.updateUserProfile = async (req, res) => {
       return res.status(500).json({ message: "Failed to update uer profile" });
     }
 
-    return res
-      .status(201)
-      .json({
-        message: "User Profile Updated sucessfully",
-        success: true,
-        userProfile: updatedUserProfile,
-      });
+    return res.status(201).json({
+      message: "User Profile Updated sucessfully",
+      success: true,
+      userProfile: updatedUserProfile,
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message: "Error in updating user profile",
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: "Error in updating user profile",
+      error: error.message,
+    });
   }
 };
