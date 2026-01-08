@@ -10,7 +10,7 @@ import UserDashboard from '@/Pages/User/UserDashboard'
 import VolunteerLoginPage from '@/Pages/Volunteer/VolunteerLoginPage'
 import VolunteerProfilePage from '@/Pages/Volunteer/VolunteerProfilePage'
 import VolunteerRegisterPage from '@/Pages/Volunteer/VolunteerRegisterPage'
-import VolunteerDashboard from '@/Pages/VolunteerDashboard'
+import VolunteerDashboard from '@/Pages/Volunteer/VolunteerDashboard'
 import React from 'react'
 import { Route,Routes } from 'react-router-dom'
 

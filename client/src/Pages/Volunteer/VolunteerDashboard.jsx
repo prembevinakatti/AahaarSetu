@@ -37,7 +37,7 @@ const VolunteerDashboard = () => {
             {/* LEFT — VOLUNTEER INFO */}
             <div className="col-span-5 bg-white rounded-xl shadow-sm p-6 flex flex-col gap-5">
 
-              <div className="flex items-center gap-2 text-green-600">
+              <div className="flex items-center gap-2 text-gray-600">
                 <HandHeart />
                 <h2 className="text-lg font-semibold">
                   Volunteer Information
@@ -73,7 +73,7 @@ const VolunteerDashboard = () => {
             {/* RIGHT — SERVICE STATUS */}
             <div className="col-span-7 bg-white rounded-xl shadow-sm p-6 flex flex-col gap-6">
 
-              <div className="flex items-center gap-2 text-green-600">
+              <div className="flex items-center gap-2 text-gray-600">
                 <Activity />
                 <h2 className="text-lg font-semibold">
                   Service Status Overview
@@ -135,7 +135,7 @@ const InfoRow = ({ icon, label, value }) => (
     <div className="text-green-600 mt-0.5">{icon}</div>
     <div>
       <p className="text-sm text-gray-500">{label}</p>
-      <p className="font-semibold text-gray-900">{value}</p>
+      <p className="font-semibold text-green-600">{value}</p>
     </div>
   </div>
 )
@@ -147,7 +147,7 @@ const StatusItem = ({ label, value, icon, highlight }) => (
     </p>
     <p
       className={`text-xl font-bold ${
-        highlight ? "text-green-600" : "text-gray-900"
+        highlight ? "text-green-600" : "text-green-600"
       }`}
     >
       {value}
