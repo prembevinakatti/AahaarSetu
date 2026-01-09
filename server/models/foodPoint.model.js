@@ -21,18 +21,24 @@ const foodPoint = new mongoose.Schema(
         required: true,
       },
     },
-    address: {
-      type: String,
-      required: true,
-    },
+    // address: {
+    //   type: String,
+    //   required: true,
+    // },
     foodType: {
       type: String,
       enum: ["Vegetarian", "Vegan", "Non-Vegetarian", "Mixed"],
       required: true,
     },
     timings: {
-      type: String,
-      required: true,
+      from: {
+        type: String,
+        required: true,
+      },
+      to: {
+        type: String,
+        required: true,
+      },
     },
     eligibility: {
       type: String,

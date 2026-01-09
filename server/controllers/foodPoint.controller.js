@@ -26,7 +26,6 @@ module.exports.addFoodPoint = async (req, res) => {
     const newFoodPoint = await foodPointModel.create({
       name: data.name,
       description: data.description,
-      address: data.address,
       foodType: data.foodType,
       timings: data.timings,
       eligibility: data.eligibility,
