@@ -60,7 +60,7 @@ module.exports.registerAdmin = async (req, res) => {
   }
 };
 
-modul.exports.loginAdmin = async (req, res) => {
+module.exports.loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
