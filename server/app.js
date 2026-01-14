@@ -20,7 +20,7 @@ const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true,
 };
-app.cors(corsOptions);
+app.use(cors(corsOptions));
 
 app.use("/api/user/auth", userAuth);
 app.use("/api/user/admin", adminAuth);
