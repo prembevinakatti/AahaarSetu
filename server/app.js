@@ -15,6 +15,7 @@ const crisisModeRoute = require("./routes/crisisMode.route");
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
 
 const corsOptions = {
   origin: "http://localhost:5173",
@@ -31,7 +32,6 @@ app.use("/api/volunteer/verify", foodRoute);
 app.use("/api/user/profile", userProfile);
 app.use("/api/admin/crisisMode", crisisModeRoute);
 
-app.use(cookieParser());
 
 const PORT = process.env.PORT || 8080;
 

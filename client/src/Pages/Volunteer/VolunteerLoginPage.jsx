@@ -37,10 +37,14 @@ const VolunteerLoginPage = () => {
         { withCredentials: true },
       );
 
-      if (res.data.success && !res.data.volunteerProfile) {
-        navigate("/VolunteerProfile");
+      if (res.data.success) {
+        if (res.data.volunteer.volunteerProfile) {
+          navigate("/VolunteerDashboard");
+        } else {
+          navigate("/VolunteerProfile");
+        }
       } else {
-        navigate("/VolunteerDashboard");
+        setError(res.data.message);
       }
 
       dispatch(
