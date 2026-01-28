@@ -15,7 +15,7 @@ module.exports.createUserProfile = async (req, res) => {
         .json({ message: "Unauthorised:User Id not found" });
     }
 
-    const existingUser = await userProfileModel.findOne({ userId });
+    const existingUser = await userProfileModel.findOne({ user:userId });
 
     if (existingUser) {
       return res.status(404).json({ message: "User already exists" });
@@ -24,6 +24,7 @@ module.exports.createUserProfile = async (req, res) => {
     const userGeneratedId = await generateUserId();
 
     const newUserProfile = await userProfileModel.create({
+      user:userId,
       age,
       contact,
       gender,

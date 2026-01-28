@@ -19,7 +19,7 @@ const UserProfileSchema = new mongoose.Schema(
       enum: ["Male", "Female", "Others"],
       required: true,
     },
-    loaction: {
+    location: {
       type: String,
       required: true,
     },

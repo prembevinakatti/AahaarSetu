@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { UserPlus, Mail, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const UserRegisterPage = () => {
+  const navigate=useNavigate();
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -27,6 +29,8 @@ const UserRegisterPage = () => {
       );
 
       alert(res.data.message);
+
+      navigate("/UserLogin");
     } catch (error) {
       console.log(error);
       alert(error.response?.data?.message || "Error registering user");

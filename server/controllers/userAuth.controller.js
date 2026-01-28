@@ -36,6 +36,7 @@ module.exports.userRegister = async (req, res) => {
       user: newuser,
     });
   } catch (error) {
+    console.error("error");
     return res
       .status(500)
       .json({ message: "Error in registering", error });
@@ -67,7 +68,7 @@ module.exports.userLogin = async (req, res) => {
       .json({ message: "User login successfully", success: true, user: user });
   } catch (error) {
     return res
-      .status(404)
+      .status(500)
       .json({ message: "Error in logging", error });
   }
 };
