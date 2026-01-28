@@ -11,10 +11,17 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { UtensilsCrossed, LocateFixed, Clock } from "lucide-react";
+import { UtensilsCrossed, LocateFixed, Loader2 } from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddFoodPoint = () => {
+  const navigate = useNavigate();
+
   const [locating, setLocating] = useState(false);
+  const [coords, setCoords] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -37,6 +44,7 @@ const AddFoodPoint = () => {
       timings: { ...prev.timings, [key]: value },
     }));
 
+  // 📍 Get current location
   const handleGetLocation = () => {
     if (!navigator.geolocation) return alert("Geolocation not supported");
 
@@ -45,23 +53,65 @@ const AddFoodPoint = () => {
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords;
+
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
         );
         const data = await res.json();
 
-        update(
-          "location",
-          data?.display_name ||
-            `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
-        );
+        update("location", data.display_name);
+        setCoords([longitude, latitude]); // GeoJSON order
+
         setLocating(false);
       },
       () => {
         alert("Unable to fetch location");
         setLocating(false);
-      }
+      },
     );
+  };
+
+  // 🚀 Submit food point
+  const handleSubmit = async () => {
+    setError("");
+
+    if (!coords) {
+      return setError("Please fetch location using GPS");
+    }
+
+    if (!form.name || !form.timings.from || !form.timings.to) {
+      return setError("Please fill all required fields");
+    }
+
+    try {
+      setLoading(true);
+
+      await axios.post(
+        "http://localhost:3000/api/volunteer/verify/addFoodPoint",
+        {
+          data: {
+            name: form.name,
+            description: form.description,
+            foodType: form.foodType,
+            eligibility: form.eligibility,
+            stockStatus: form.stockStatus,
+            timings: form.timings,
+            address: form.location,
+            location: {
+              coordinates: coords,
+            },
+          },
+        },
+        { withCredentials: true },
+      );
+
+      navigate("/VolunteerDashboard");
+    } catch (err) {
+      console.log(err);
+      setError(err.response?.data?.message || "Failed to add food point");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -81,11 +131,11 @@ const AddFoodPoint = () => {
           <div className="grid grid-cols-3 gap-6">
             {/* NAME */}
             <div>
-              <label className="text-sm font-medium">
-                Name <span className="text-red-500">*</span>
-              </label>
+              <label className="text-sm font-medium">Name *</label>
               <Input
-                className="h-11 w-62.5"
+                className="h-11"
+                value={form.name}
+                onChange={(e) => update("name", e.target.value)}
                 placeholder="Community Kitchen – KR Puram"
               />
             </div>
@@ -93,8 +143,11 @@ const AddFoodPoint = () => {
             {/* FOOD TYPE */}
             <div>
               <label className="text-sm font-medium">Food Type</label>
-              <Select defaultValue="Mixed">
-                <SelectTrigger className="h-11 py-5 w-62.5">
+              <Select
+                value={form.foodType}
+                onValueChange={(v) => update("foodType", v)}
+              >
+                <SelectTrigger className="h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -108,37 +161,32 @@ const AddFoodPoint = () => {
 
             {/* FROM */}
             <div>
-              <label className="text-sm font-medium">
-                From <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <Input
-                  type="time"
-                  className="h-11 w-62.5 pr-1"
-                  onChange={(e) => updateTimings("from", e.target.value)}
-                />
-              </div>
+              <label className="text-sm font-medium">From *</label>
+              <Input
+                type="time"
+                className="h-11"
+                onChange={(e) => updateTimings("from", e.target.value)}
+              />
             </div>
 
             {/* TO */}
             <div>
-              <label className="text-sm font-medium">
-                To <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <Input
-                  type="time"
-                  className="h-11 w-62.5 pr-1"
-                  onChange={(e) => updateTimings("to", e.target.value)}
-                />
-              </div>
+              <label className="text-sm font-medium">To *</label>
+              <Input
+                type="time"
+                className="h-11"
+                onChange={(e) => updateTimings("to", e.target.value)}
+              />
             </div>
 
             {/* ELIGIBILITY */}
             <div>
               <label className="text-sm font-medium">Eligibility</label>
-              <Select defaultValue="Everyone">
-                <SelectTrigger className="h-11 py-5 w-62.5">
+              <Select
+                value={form.eligibility}
+                onValueChange={(v) => update("eligibility", v)}
+              >
+                <SelectTrigger className="h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -153,8 +201,11 @@ const AddFoodPoint = () => {
             {/* STOCK */}
             <div>
               <label className="text-sm font-medium">Stock Status</label>
-              <Select defaultValue="AVAILABLE">
-                <SelectTrigger className="h-11 py-5 w-62.5">
+              <Select
+                value={form.stockStatus}
+                onValueChange={(v) => update("stockStatus", v)}
+              >
+                <SelectTrigger className="h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -168,37 +219,47 @@ const AddFoodPoint = () => {
 
           {/* LOCATION */}
           <div className="mt-6">
-            <label className="text-sm font-medium">
-              Location <span className="text-red-500">*</span>
-            </label>
+            <label className="text-sm font-medium">Location *</label>
             <div className="relative">
               <Input
                 className="h-11 pr-10"
-                placeholder="Use current location"
+                value={form.location}
                 onChange={(e) => update("location", e.target.value)}
+                placeholder="Use current location"
+                disabled={locating}
               />
               <button
                 onClick={handleGetLocation}
+                disabled={locating}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-green-700"
               >
-                <LocateFixed size={18} />
+                {locating ? (
+                  <Loader2 className="animate-spin" size={18} />
+                ) : (
+                  <LocateFixed size={18} />
+                )}
               </button>
             </div>
           </div>
 
           {/* DESCRIPTION */}
           <div className="mt-6">
-            <label className="text-sm font-medium">
-              Description <span className="text-gray-400">(optional)</span>
-            </label>
+            <label className="text-sm font-medium">Description</label>
             <Textarea
               className="min-h-[96px]"
-              placeholder="Free meals available for everyone"
+              value={form.description}
+              onChange={(e) => update("description", e.target.value)}
             />
           </div>
 
-          <Button className="w-full h-11 mt-8 bg-green-700 hover:bg-green-800">
-            Add Food Point
+          {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
+
+          <Button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="w-full h-11 mt-8 bg-green-700 hover:bg-green-800"
+          >
+            {loading ? <Loader2 className="animate-spin" /> : "Add Food Point"}
           </Button>
         </Card>
       </div>

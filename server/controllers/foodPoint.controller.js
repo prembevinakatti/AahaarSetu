@@ -9,7 +9,7 @@ module.exports.addFoodPoint = async (req, res) => {
       return res.status(400).json({ message: "Food point data is required" });
     }
 
-    if (!volunteer || !volunteer._id) {
+    if (!volunteer) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -36,7 +36,7 @@ module.exports.addFoodPoint = async (req, res) => {
         type: "Point",
         coordinates: data.location.coordinates,
       },
-      addedByVolunteer: volunteer._id,
+      addedByVolunteer: volunteer,
     });
 
     return res.status(201).json({
