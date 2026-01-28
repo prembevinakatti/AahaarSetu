@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const isUserAuthenticated = async (req, res) => {
+const isUserAuthenticated = async (req, res, next) => {
   try {
     const userToken = req.cookies.userToken;
 
@@ -8,13 +8,13 @@ const isUserAuthenticated = async (req, res) => {
       return res.status(404).json({ message: "Token not found" });
     }
 
-    const decodedtoken = await jwt.verify(token, process.env.USER_JWT_TOKEN);
+    const decoded = jwt.verify(userToken, process.env.USER_JWT_TOKEN);
 
-    if (!decodedtoken) {
-      return res.status(404).json({ message: "Unauthorised token" });
+    if (!decoded) {
+      return res.status(404).json({ message: "Invalid token" });
     }
 
-    req.userId = decodedtoken.userId;
+    req.userId = decoded.userId;
     next();
 
   } catch (error) {

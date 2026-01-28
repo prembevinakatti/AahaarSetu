@@ -1,4 +1,6 @@
 const userAuthModel = require("../models/userAuth.model");
+const bcrypt=require("bcrypt");
+const jwt=require("jsonwebtoken");
 
 module.exports.userRegister = async (req, res) => {
   try {
@@ -36,7 +38,7 @@ module.exports.userRegister = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ message: "Error in registering", error: error.message });
+      .json({ message: "Error in registering", error });
   }
 };
 
@@ -66,6 +68,6 @@ module.exports.userLogin = async (req, res) => {
   } catch (error) {
     return res
       .status(404)
-      .json({ message: "Error in logging", error: error.message });
+      .json({ message: "Error in logging", error });
   }
 };
