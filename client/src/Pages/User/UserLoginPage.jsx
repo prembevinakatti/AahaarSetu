@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { User, Lock } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 const UserLoginPage = () => {
+  const navigate=useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -25,7 +27,8 @@ const UserLoginPage = () => {
         { withCredentials: true }
       );
 
-      alert(res.data.message)
+      alert(res.data.message);
+      navigate("UserProfile");
     } catch (error) {
       alert(error.response?.data?.message || "Error logging user")
     }
