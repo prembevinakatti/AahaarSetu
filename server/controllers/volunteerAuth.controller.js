@@ -1,4 +1,6 @@
 const volunteerAuthModel = require("../models/volunteerAuth.model");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 module.exports.registerVolunteer = async (req, res) => {
   try {
@@ -28,7 +30,7 @@ module.exports.registerVolunteer = async (req, res) => {
 
     const volunteerToken = jwt.sign(
       { id: newVolunteer._id },
-      process.env.VOLUNTEER_JWT_TOKEN
+      process.env.VOLUNTEER_JWT_TOKEN,
     );
 
     res.cookie("volunteerToken", volunteerToken);
@@ -54,7 +56,7 @@ module.exports.loginVolunteer = async (req, res) => {
         .json({ message: "Email and password are required" });
     }
 
-    const volunteer = await volunteerAuthModel.findOne(email);
+    const volunteer = await volunteerAuthModel.findOne({ email });
     if (!volunteer) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
@@ -64,12 +66,12 @@ module.exports.loginVolunteer = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const token = jwt.sign(
-      { id: newVolunteer._id },
-      process.env.VOLUNTEER_JWT_TOKEN
+    const volunteerToken = jwt.sign(
+      { id: volunteer._id },
+      process.env.VOLUNTEER_JWT_TOKEN,
     );
 
-    res.cookie("volunteerToken", token);
+    res.cookie("volunteerToken", volunteerToken);
 
     return res.status(200).json({
       message: "Volunteer logged in successfully",

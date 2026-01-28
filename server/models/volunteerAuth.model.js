@@ -26,14 +26,13 @@ const volunteerAuthSchema = new mongoose.Schema(
       ref: "VolunteerProfile",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-volunteerAuthSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+volunteerAuthSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
   const hash = await bcrypt.hash(this.password, 10);
   this.password = hash;
-  next();
 });
 
 module.exports = mongoose.model("VolunteerAuth", volunteerAuthSchema);
