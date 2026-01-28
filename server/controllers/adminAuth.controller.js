@@ -1,9 +1,13 @@
 const adminAuthModel = require("../models/adminAuth.model");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 module.exports.registerAdmin = async (req, res) => {
   try {
     const { username, email, orgName, orgNumber, location, password } =
       req.body;
+
+    console.log(req.body);
 
     if (
       !username ||
@@ -45,7 +49,7 @@ module.exports.registerAdmin = async (req, res) => {
 
     const adminToken = jwt.sign(
       { adminId: newAdmin._id },
-      process.env.ADMIN_JWT_TOKEN
+      process.env.ADMIN_JWT_TOKEN,
     );
     res.cookie("token", adminToken);
 
@@ -80,7 +84,7 @@ module.exports.loginAdmin = async (req, res) => {
 
     const adminToken = jwt.sign(
       { userId: admin._id },
-      process.env.ADMIN_JWT_TOKEN
+      process.env.ADMIN_JWT_TOKEN,
     );
     res.cookie("token", adminToken);
 
