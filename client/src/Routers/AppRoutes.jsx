@@ -22,17 +22,17 @@ const AppRoutes = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/AdminLogin" element={<AdminLoginPage />} />
         <Route path="/AdminRegister" element={<AdminRegisterPage />} />
+        <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/UserLogin" element={<UserLoginPage />} />
         <Route path="/UserRegister" element={<UserRegisterPage />} />
+        <Route path="/UserProfile" element={<UserProfilePage />} />
+        <Route path="/UserDashboard" element={<UserDashboard />} />
         <Route path="/VolunteerLogin" element={<VolunteerLoginPage />} />
         <Route path="/VolunteerRegister" element={<VolunteerRegisterPage />} />
-        <Route path="/UserProfile" element={<UserProfilePage />} />
-        <Route path="/VolunteerProfile" element={<VolunteerProfilePage />} />
-        <Route path="/HomePage" element={<HomePage />} />
-        <Route path="/AdminDashboard" element={<AdminDashboard />} />
-        <Route path="/UserDashboard" element={<UserDashboard />} />
         <Route path="/VolunteerDashboard" element={<VolunteerDashboard />} />
+        <Route path="/VolunteerProfile" element={<VolunteerProfilePage />} />
         <Route path="/AddFoodPoint" element={<AddFoodPoint />} />
+        <Route path="/HomePage" element={<HomePage />} />
       </Routes>
     </div>
   );
