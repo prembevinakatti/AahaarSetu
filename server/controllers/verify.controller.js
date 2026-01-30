@@ -3,7 +3,7 @@ const verifyModel = require("../models/verify.model");
 module.exports.requestVerification = async (req, res) => {
   try {
     const volunteer = req.volunteer;
-    const { adminId } = req.params.adminId;
+    const adminId = req.params.adminId;
 
     if (!volunteer) {
       return res
@@ -22,7 +22,10 @@ module.exports.requestVerification = async (req, res) => {
         .json({ message: "Verification request already sent" });
     }
 
-    const newRequest = await verifyModel.create({ volunteer, adminId });
+    const newRequest = await verifyModel.create({
+      volunteerId: volunteer,
+      adminId,
+    });
 
     if (!newRequest) {
       return res

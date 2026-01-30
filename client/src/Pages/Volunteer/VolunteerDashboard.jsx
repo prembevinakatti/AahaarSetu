@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import Navbar from "@/components/Navbar"
+import React, { useEffect, useState } from "react";
+import Navbar from "@/components/Navbar";
 import {
   HandHeart,
   Mail,
@@ -7,85 +7,112 @@ import {
   MapPin,
   Activity,
   CheckCircle,
-  Clock
-} from "lucide-react"
-import { Switch } from "@/components/ui/switch"
-import { Button } from "@/components/ui/button"
-import axios from "axios"
+  Clock,
+} from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
 
 const VolunteerDashboard = () => {
-  const [available, setAvailable] = useState(true)
-  const [loadingStatus, setLoadingStatus] = useState(false)
+  const [available, setAvailable] = useState(true);
+  const [loadingStatus, setLoadingStatus] = useState(false);
 
-  const [volunteer, setVolunteer] = useState(null)
-  const [profile, setProfile] = useState(null)
+  const [volunteer, setVolunteer] = useState(null);
+  const [profile, setProfile] = useState(null);
 
-  const [verificationStatus, setVerificationStatus] = useState("UNVERIFIED")
-  const [requesting, setRequesting] = useState(false)
+  const [verificationStatus, setVerificationStatus] = useState("UNVERIFIED");
 
-  // 🔹 Fetch volunteer profile on load
+  // Admin modal
+  const [showAdmins, setShowAdmins] = useState(false);
+  const [admins, setAdmins] = useState([]);
+  const [nearestAdminId, setNearestAdminId] = useState(null);
+  const [requesting, setRequesting] = useState(false);
+
+  // Load profile
   useEffect(() => {
     const fetchProfile = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:3000/api/user/volunteer/profile",
-          { withCredentials: true }
-        )
+      const res = await axios.get(
+        "http://localhost:3000/api/user/volunteer/profile",
+        { withCredentials: true },
+      );
 
-        const profileData = res.data.volunteerProfile
-        setProfile(profileData)
-        setVolunteer(profileData.volunteer)
+      const profileData = res.data.volunteerProfile;
+      setProfile(profileData);
+      setVolunteer(profileData.volunteer);
+      setAvailable(profileData.availabilityStatus === "AVAILABLE");
 
-        setAvailable(profileData.availabilityStatus === "AVAILABLE")
-
-        if (profileData.isVerified) {
-          setVerificationStatus("VERIFIED")
-        }
-      } catch (err) {
-        console.error("Failed to load volunteer profile")
+      if (profileData.isVerified) {
+        setVerificationStatus("VERIFIED");
       }
-    }
+    };
 
-    fetchProfile()
-  }, [])
+    fetchProfile();
+  }, []);
 
-  // 🔹 Toggle availability
+  // Toggle availability
   const handleAvailabilityToggle = async (value) => {
-    setAvailable(value)
-    setLoadingStatus(true)
+    setAvailable(value);
+    setLoadingStatus(true);
 
     try {
       await axios.patch(
         "http://localhost:3000/api/user/volunteer/update-status",
         { availabilityStatus: value ? "AVAILABLE" : "OFFLINE" },
-        { withCredentials: true }
-      )
-    } catch (err) {
-      alert("Failed to update availability")
+        { withCredentials: true },
+      );
     } finally {
-      setLoadingStatus(false)
+      setLoadingStatus(false);
     }
-  }
+  };
 
-  // 🔹 Request admin verification
+  // Get admins + find nearest
   const handleRequestVerification = async () => {
+    setShowAdmins(true);
+
+    const res = await axios.get(
+      "http://localhost:3000/api/user/admin/getAllAdmins",
+      { withCredentials: true },
+    );
+
+    const adminsList = res.data.admins;
+    setAdmins(adminsList);
+
+    // find nearest using simple string match (or coords if you store them)
+    const volunteerArea = profile.currentArea.toLowerCase();
+
+    let nearest = adminsList.find((a) =>
+      a.location.toLowerCase().includes(volunteerArea),
+    );
+
+    if (nearest) setNearestAdminId(nearest._id);
+  };
+
+  // Send request to selected admin
+  const sendVerificationRequest = async (adminId) => {
     try {
-      setRequesting(true)
+      setRequesting(true);
 
-      const res = await axios.post(
-        "http://localhost:3000/api/volunteer/request-verification",
+      await axios.post(
+        `http://localhost:3000/api/admin/verify/requestVerification/${adminId}`,
         {},
-        { withCredentials: true }
-      )
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        },
+      );
 
-      alert(res.data.message)
-      setVerificationStatus("PENDING")
+      alert("Verification request sent!");
+      setVerificationStatus("PENDING");
+      setShowAdmins(false);
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to send request")
+      console.log(err);
+      alert("Failed to send request");
     } finally {
-      setRequesting(false)
+      setRequesting(false);
     }
-  }
+  };
 
   return (
     <>
@@ -93,160 +120,147 @@ const VolunteerDashboard = () => {
 
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 pt-20">
         <div className="max-w-6xl mx-auto px-8 py-6 flex flex-col gap-6">
-
-          {/* WELCOME */}
           <section className="bg-white border-l-4 border-green-600 rounded-lg px-6 py-4 shadow-sm">
             <h1 className="text-2xl font-bold text-green-600">
               Welcome, {volunteer?.username || "Volunteer"}
             </h1>
-            <p className="text-gray-600 mt-1">
-              Service and availability control panel
-            </p>
           </section>
 
           <section className="grid grid-cols-12 gap-6">
-
             {/* LEFT */}
             <div className="col-span-5 bg-white rounded-xl shadow-sm p-6 flex flex-col gap-5">
-
-              <div className="flex items-center gap-2 text-gray-600">
-                <HandHeart />
-                <h2 className="text-lg font-semibold">
-                  Volunteer Information
-                </h2>
-              </div>
-
-              <InfoRow
-                icon={<Mail />}
-                label="Email Address"
-                value={volunteer?.email || "-"}
-              />
-
+              <InfoRow icon={<Mail />} label="Email" value={volunteer?.email} />
               <InfoRow
                 icon={<Phone />}
-                label="Phone Number"
-                value={volunteer?.phoneNumber || "-"}
+                label="Phone"
+                value={volunteer?.phoneNumber}
               />
-
               <InfoRow
                 icon={<MapPin />}
-                label="Current Location"
-                value={profile?.currentArea || "-"}
+                label="Location"
+                value={profile?.currentArea}
               />
-
               <InfoRow
                 icon={<Activity />}
-                label="Associated Organization"
-                value={profile?.orgName || "-"}
+                label="Organization"
+                value={profile?.orgName}
               />
-
             </div>
 
             {/* RIGHT */}
             <div className="col-span-7 bg-white rounded-xl shadow-sm p-6 flex flex-col gap-6">
+              <StatusItem
+                label="Availability"
+                value={available ? "AVAILABLE" : "OFFLINE"}
+              />
 
-              <div className="flex items-center gap-2 text-gray-600">
-                <Activity />
-                <h2 className="text-lg font-semibold">
-                  Service Status Overview
-                </h2>
-              </div>
+              <Switch
+                checked={available}
+                onCheckedChange={handleAvailabilityToggle}
+              />
 
-              <div className="grid grid-cols-2 gap-x-10 gap-y-6">
-
-                <StatusItem
-                  label="Availability Status"
-                  value={available ? "AVAILABLE" : "OFFLINE"}
-                  highlight
-                />
-
-                <div>
-                  <p className="text-sm text-gray-500">
-                    Toggle Availability
-                  </p>
-                  <Switch
-                    checked={available}
-                    disabled={loadingStatus}
-                    onCheckedChange={handleAvailabilityToggle}
-                    className="mt-2"
-                  />
-                </div>
-
-                <StatusItem
-                  label="Verification Status"
-                  value={
-                    verificationStatus === "VERIFIED"
-                      ? "Verified"
-                      : verificationStatus === "PENDING"
-                      ? "Pending Approval"
+              <StatusItem
+                label="Verification"
+                value={
+                  verificationStatus === "VERIFIED"
+                    ? "Verified"
+                    : verificationStatus === "PENDING"
+                      ? "Pending"
                       : "Not Verified"
-                  }
-                  icon={
-                    verificationStatus === "VERIFIED" ? (
-                      <CheckCircle className="text-green-600" size={18} />
-                    ) : (
-                      <Clock className="text-yellow-500" size={18} />
-                    )
-                  }
-                />
+                }
+                icon={
+                  verificationStatus === "VERIFIED" ? (
+                    <CheckCircle className="text-green-600" size={18} />
+                  ) : (
+                    <Clock className="text-yellow-500" size={18} />
+                  )
+                }
+              />
 
-                {verificationStatus === "UNVERIFIED" && (
-                  <div className="col-span-2">
-                    <Button
-                      onClick={handleRequestVerification}
-                      disabled={requesting}
-                      className="bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      {requesting
-                        ? "Requesting Verification..."
-                        : "Request Admin Verification"}
-                    </Button>
-                  </div>
-                )}
-
-                <StatusItem
-                  label="Total Distributions"
-                  value={profile?.totalDistributions || 0}
-                />
-
-                <StatusItem
-                  label="Last Active"
-                  value="Today"
-                />
-
-              </div>
-
+              {verificationStatus === "UNVERIFIED" && (
+                <Button
+                  onClick={handleRequestVerification}
+                  className="bg-green-600 text-white"
+                >
+                  Request Admin Verification
+                </Button>
+              )}
             </div>
-
           </section>
-
         </div>
       </div>
+
+      {/* ================= ADMIN MODAL ================= */}
+      {showAdmins && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white w-[700px] max-h-[80vh] overflow-y-auto rounded-xl p-6">
+            <h2 className="text-xl font-bold mb-4 text-green-600">
+              Select Nearest Admin
+            </h2>
+
+            {admins.map((admin) => (
+              <div
+                key={admin._id}
+                className={`border p-4 rounded-lg mb-3 flex justify-between items-center ${
+                  admin._id === nearestAdminId
+                    ? "border-green-600 bg-green-50"
+                    : "border-gray-200"
+                }`}
+              >
+                <div>
+                  <p className="font-semibold">{admin.username}</p>
+                  <p className="text-sm text-gray-600">
+                    {admin.orgName} • {admin.location}
+                  </p>
+                  {admin._id === nearestAdminId && (
+                    <p className="text-xs text-green-600 font-bold">
+                      Nearest Admin
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  disabled={requesting}
+                  onClick={() => sendVerificationRequest(admin._id)}
+                  className="bg-green-600 text-white"
+                >
+                  Send Request
+                </Button>
+              </div>
+            ))}
+
+            <Button
+              variant="outline"
+              className="w-full mt-4"
+              onClick={() => setShowAdmins(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
     </>
-  )
-}
+  );
+};
 
-/* ---------- HELPERS ---------- */
-
+/* Helpers */
 const InfoRow = ({ icon, label, value }) => (
-  <div className="flex items-start gap-3">
-    <div className="text-green-600 mt-0.5">{icon}</div>
+  <div className="flex gap-3">
+    <div className="text-green-600">{icon}</div>
     <div>
       <p className="text-sm text-gray-500">{label}</p>
-      <p className="font-semibold text-green-600">{value}</p>
+      <p className="font-semibold text-green-600">{value || "-"}</p>
     </div>
   </div>
-)
+);
 
-const StatusItem = ({ label, value, icon, highlight }) => (
+const StatusItem = ({ label, value, icon }) => (
   <div>
     <p className="text-sm text-gray-500 flex items-center gap-2">
       {icon} {label}
     </p>
-    <p className={`text-xl font-bold text-green-600`}>
-      {value}
-    </p>
+    <p className="text-xl font-bold text-green-600">{value}</p>
   </div>
-)
+);
 
-export default VolunteerDashboard
+export default VolunteerDashboard;

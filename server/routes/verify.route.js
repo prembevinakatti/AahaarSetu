@@ -11,7 +11,7 @@ const isAdminAuthenticated = require("../middleware/adminMiddleware");
 const router = express.Router();
 
 router
-  .route("/requestVerification")
+  .route("/requestVerification/:adminId")
   .post(isVolunteerAuthenticated, requestVerification);
 
 router

@@ -98,3 +98,22 @@ module.exports.loginAdmin = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+module.exports.getAllAdmins = async (req, res) => {
+  try {
+    const admins = await adminAuthModel.find();
+
+    if (!admins || admins.length === 0) {
+      return res.status(404).json({ message: "No admins found" });
+    }
+
+    return res.status(200).json({
+      message: "All admins fetched successfully",
+      success: true,
+      admins: admins,
+    });
+  } catch (error) {
+    console.error("Error fetching all admins:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
