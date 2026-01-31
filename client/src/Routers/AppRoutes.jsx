@@ -14,6 +14,7 @@ import VolunteerDashboard from "@/Pages/Volunteer/VolunteerDashboard";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import AddFoodPoint from "@/Pages/Volunteer/AddFoodPoint";
+import ConnectedOrg from "@/Pages/Admin/ConnectedOrg";
 
 const AppRoutes = () => {
   return (
@@ -32,6 +33,7 @@ const AppRoutes = () => {
         <Route path="/VolunteerDashboard" element={<VolunteerDashboard />} />
         <Route path="/VolunteerProfile" element={<VolunteerProfilePage />} />
         <Route path="/AddFoodPoint" element={<AddFoodPoint />} />
+        <Route path="/AdminConnection" element={<ConnectedOrg />} />
         <Route path="/HomePage" element={<HomePage />} />
       </Routes>
     </div>
