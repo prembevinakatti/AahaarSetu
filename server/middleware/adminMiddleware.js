@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const isAdminAuthenticated = async (req, res) => {
+const isAdminAuthenticated = async (req, res, next) => {
   try {
     const adminToken = req.cookies.adminToken;
 
@@ -10,7 +10,7 @@ const isAdminAuthenticated = async (req, res) => {
 
     const decodedtoken = await jwt.verify(
       adminToken,
-      process.env.ADMIN_JWT_TOKEN
+      process.env.ADMIN_JWT_TOKEN,
     );
     if (!decodedtoken) {
       return res.status(404).json({ message: "Unauthorised token" });

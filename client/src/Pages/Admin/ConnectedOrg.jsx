@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import {
   UserCheck,
   Mail,
-  Phone,
   MapPin,
   Activity,
   CheckCircle,
@@ -15,41 +14,65 @@ import {
 import axios from "axios"
 
 const ConnectedOrg = () => {
-  const [pendingVolunteers, setPendingVolunteers] = useState([])
-  const [connectedVolunteers, setConnectedVolunteers] = useState([])
+  const [pending, setPending] = useState([])
+  const [connected, setConnected] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchVolunteers()
+    fetchData()
   }, [])
 
-  const fetchVolunteers = async () => {
+  const fetchData = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:3000/api/admin/volunteers",
-        { withCredentials: true }
-      )
+      const [pendingRes, allRes] = await Promise.all([
+        axios.get(
+          "http://localhost:3000/api/admin/verify/getVerificationRequests",
+          { withCredentials: true }
+        ),
+        axios.get(
+          "http://localhost:3000/api/admin/verify/getAllVerifications",
+          { withCredentials: true }
+        )
+      ])
 
-      setPendingVolunteers(res.data.pending)
-      setConnectedVolunteers(res.data.connected)
+      setPending(pendingRes.data.requests)
+      setConnected(
+        allRes.data.verifications.filter(v => v.status === "APPROVED")
+      )
     } catch (err) {
-      console.error("Failed to fetch volunteers")
+      console.log(err)
     } finally {
       setLoading(false)
     }
   }
 
-  const approveVolunteer = async (volunteerId) => {
-    try {
-      await axios.post(
-        "http://localhost:3000/api/admin/verify/approve",
-        { volunteerId },
-        { withCredentials: true }
-      )
-      fetchVolunteers()
-    } catch {
-      alert("Failed to approve volunteer")
-    }
+  const handleApprove = async (volunteerId) => {
+    await axios.put(
+      "http://localhost:3000/api/admin/verify/acceptOrRejectVerification",
+      { volunteerId, status: "APPROVED" },
+      { withCredentials: true }
+    )
+    fetchData()
+  }
+
+  const handleReject = async (volunteerId) => {
+    await axios.put(
+      "http://localhost:3000/api/admin/verify/acceptOrRejectVerification",
+      { volunteerId, status: "REJECTED" },
+      { withCredentials: true }
+    )
+    fetchData()
+  }
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-indigo-600 font-semibold">Loading...</p>
+        </div>
+      </>
+    )
   }
 
   return (
@@ -59,50 +82,42 @@ const ConnectedOrg = () => {
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-indigo-100 pt-20 px-8">
         <div className="max-w-7xl mx-auto flex flex-col gap-8">
 
-          {/* HEADER */}
           <section className="bg-white border-l-4 border-indigo-600 rounded-lg px-6 py-4 shadow-sm">
             <h1 className="text-2xl font-bold text-indigo-700">
               Admin Organization Control Panel
             </h1>
             <p className="text-gray-600">
-              Verify volunteers & manage connected workforce
+              Volunteer verification system
             </p>
           </section>
 
-          {/* STATS */}
           <section className="grid grid-cols-3 gap-6">
-            <StatCard title="Pending Requests" value={pendingVolunteers.length} />
-            <StatCard title="Connected Volunteers" value={connectedVolunteers.length} />
-            <StatCard title="Total Workforce" value={pendingVolunteers.length + connectedVolunteers.length} />
+            <StatCard title="Pending Requests" value={pending.length} />
+            <StatCard title="Connected Volunteers" value={connected.length} />
+            <StatCard title="Total Volunteers" value={pending.length + connected.length} />
           </section>
 
-          {/* PENDING REQUESTS */}
-          <Section title="Pending Verification Requests" icon={<Clock />}>
-            {pendingVolunteers.length === 0 && (
-              <Empty text="No pending requests" />
-            )}
-
-            {pendingVolunteers.map(v => (
+          {/* PENDING */}
+          <Section title="Pending Requests" icon={<Clock />}>
+            {pending.map(v => (
               <VolunteerCard
                 key={v._id}
-                volunteer={v}
-                action={() => approveVolunteer(v._id)}
-                actionLabel="Approve & Connect"
-                highlight
+                volunteer={v.volunteerId}
+                admin={v.adminId}
+                pending
+                onApprove={() => handleApprove(v.volunteerId._id)}
+                onReject={() => handleReject(v.volunteerId._id)}
               />
             ))}
           </Section>
 
           {/* CONNECTED */}
           <Section title="Connected Volunteers" icon={<CheckCircle />}>
-            {connectedVolunteers.length === 0 && (
-              <Empty text="No connected volunteers" />
-            )}
-
-            {connectedVolunteers.map(v => (
+            {connected.map(v => (
               <VolunteerCard
                 key={v._id}
-                volunteer={v}
+                volunteer={v.volunteerId}
+                admin={v.adminId}
                 connected
               />
             ))}
@@ -116,7 +131,7 @@ const ConnectedOrg = () => {
 
 export default ConnectedOrg
 
-/* ================= COMPONENTS ================= */
+/* ---------------- UI ---------------- */
 
 const Section = ({ title, icon, children }) => (
   <Card className="p-6">
@@ -124,56 +139,45 @@ const Section = ({ title, icon, children }) => (
       {icon}
       <h2 className="text-lg font-semibold">{title}</h2>
     </div>
-    <div className="flex flex-col gap-4">
-      {children}
-    </div>
+    <div className="flex flex-col gap-4">{children}</div>
   </Card>
 )
 
-const VolunteerCard = ({ volunteer, action, actionLabel, connected, highlight }) => {
-  const profile = volunteer.volunteerProfile
+const VolunteerCard = ({ volunteer, admin, pending, connected, onApprove, onReject }) => (
+  <div className="border rounded-lg p-4 flex justify-between items-center">
+    <div className="grid grid-cols-2 gap-x-10 gap-y-2 text-sm">
 
-  return (
-    <div
-      className={`border rounded-lg p-4 flex justify-between items-center ${
-        highlight ? "border-yellow-500 bg-yellow-50" : "border-gray-200"
-      }`}
-    >
-      <div className="grid grid-cols-2 gap-x-10 gap-y-2 text-sm">
+      <Info label="Volunteer Name" value={volunteer.username} icon={<UserCheck />} />
+      <Info label="Volunteer Email" value={volunteer.email} icon={<Mail />} />
 
-        <Info label="Name" value={volunteer.username} icon={<UserCheck />} />
-        <Info label="Email" value={volunteer.email} icon={<Mail />} />
-        <Info label="Phone" value={volunteer.phoneNumber} icon={<Phone />} />
-        <Info label="Location" value={profile.currentArea} icon={<MapPin />} />
-        <Info label="Organization" value={profile.orgName} icon={<Activity />} />
-        <Info label="Volunteer ID" value={profile.volunteerId} icon={<Users />} />
+      <Info label="Admin Org" value={admin.username} icon={<Activity />} />
+      <Info label="Admin Email" value={admin.email} icon={<Mail />} />
 
-      </div>
-
-      {!connected && (
-        <Button
-          onClick={action}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white"
-        >
-          {actionLabel}
-        </Button>
-      )}
-
-      {connected && (
-        <p className="text-green-600 font-bold text-sm">
-          Connected
-        </p>
-      )}
     </div>
-  )
-}
+
+    {pending && (
+      <div className="flex flex-col gap-2">
+        <Button onClick={onApprove} className="bg-indigo-600 text-white">
+          Approve
+        </Button>
+        <Button onClick={onReject} variant="outline" className="border-red-500 text-red-600">
+          Reject
+        </Button>
+      </div>
+    )}
+
+    {connected && (
+      <p className="text-green-600 font-bold text-sm">Connected</p>
+    )}
+  </div>
+)
 
 const Info = ({ label, value, icon }) => (
   <div className="flex gap-2 items-start">
     <div className="text-indigo-600 mt-0.5">{icon}</div>
     <div>
       <p className="text-xs text-gray-500">{label}</p>
-      <p className="font-semibold text-gray-800">{value || "-"}</p>
+      <p className="font-semibold">{value || "-"}</p>
     </div>
   </div>
 )
@@ -183,8 +187,4 @@ const StatCard = ({ title, value }) => (
     <p className="text-sm text-gray-500">{title}</p>
     <p className="text-3xl font-bold text-indigo-700">{value}</p>
   </Card>
-)
-
-const Empty = ({ text }) => (
-  <p className="text-sm text-gray-500">{text}</p>
 )

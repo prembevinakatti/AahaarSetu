@@ -51,7 +51,7 @@ module.exports.registerAdmin = async (req, res) => {
       { adminId: newAdmin._id },
       process.env.ADMIN_JWT_TOKEN,
     );
-    res.cookie("token", adminToken);
+    res.cookie("adminToken", adminToken);
 
     return res.status(201).json({
       message: "Admin registered successfully",
@@ -83,10 +83,10 @@ module.exports.loginAdmin = async (req, res) => {
     }
 
     const adminToken = jwt.sign(
-      { userId: admin._id },
+      { adminId: admin._id },
       process.env.ADMIN_JWT_TOKEN,
     );
-    res.cookie("token", adminToken);
+    res.cookie("adminToken", adminToken);
 
     return res.status(201).json({
       message: "Admin login successfully",
