@@ -28,7 +28,7 @@ app.use("/api/user/admin", adminAuth);
 app.use("/api/volunteer/auth", volunteerAuth);
 app.use("/api/volunteer/profile", volunteerProfile);
 app.use("/api/admin/verify", verifyRoute);
-app.use("/api/volunteer/verify", foodRoute);
+app.use("/api/volunteer/food", foodRoute);
 app.use("/api/user/profile", userProfile);
 app.use("/api/admin/crisisMode", crisisModeRoute);
 

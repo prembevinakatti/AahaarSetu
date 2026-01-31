@@ -1,4 +1,5 @@
 const verifyModel = require("../models/verify.model");
+const volunteerProfileModel = require("../models/volunteerProfile.model");
 
 module.exports.requestVerification = async (req, res) => {
   try {
@@ -46,7 +47,7 @@ module.exports.requestVerification = async (req, res) => {
 
 module.exports.AcceptOrRejectVerification = async (req, res) => {
   try {
-    const { adminId } = req.adminId;
+    const adminId = req.adminId;
     const { volunteerId, action } = req.body;
 
     if (!adminId) {
@@ -73,16 +74,26 @@ module.exports.AcceptOrRejectVerification = async (req, res) => {
         .json({ message: "Verification request not found" });
     }
 
-    if (action === "ACCEPT") {
-      request.status = "ACCEPTED";
+    if (action === "APPROVED") {
+      request.status = "APPROVED";
       await request.save();
+
+      const volunteer = await volunteerProfileModel.findOne({
+        volunteer: volunteerId,
+      });
+      if (!volunteer) {
+        return res.status(404).json({ message: "Volunteer not found" });
+      }
+      volunteer.associatedOrganization = adminId;
+      volunteer.isVerified = true;
+      await volunteer.save();
 
       return res.status(200).json({
         message: "Verification request accepted successfully",
         success: true,
         request: request,
       });
-    } else if (action === "REJECT") {
+    } else if (action === "REJECTED") {
       request.status = "REJECTED";
       await request.save();
 

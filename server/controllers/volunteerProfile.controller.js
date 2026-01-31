@@ -72,7 +72,7 @@ module.exports.getVolunteerProfile = async (req, res) => {
 
     const volunteerProfile = await volunteerProfileModel
       .findOne({ volunteer })
-      .populate();
+      .populate("associatedOrganization volunteer",);
 
     if (!volunteerProfile) {
       return res.status(404).json({ message: "Volunteer profile not found" });
@@ -118,7 +118,7 @@ module.exports.updateStatus = async (req, res) => {
       await volunteerProfileModel.findByIdAndUpdate(
         volunteerProfile._id,
         { availabilityStatus },
-        { new: true }
+        { new: true },
       );
 
     if (!updatedVolunteerProfile) {
