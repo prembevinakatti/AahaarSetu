@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react"
 import Navbar from "@/components/Navbar"
 
-import { MapContainer, TileLayer, Marker } from "react-leaflet"
+import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { MapPin, UtensilsCrossed, Clock, X, Car, Bike, Footprints } from "lucide-react"
+import {
+  MapPin,
+  UtensilsCrossed,
+  Clock,
+  X,
+  Car,
+  Bike,
+  Footprints
+} from "lucide-react"
 import axios from "axios"
 
-/* ------------------ CONFIG ------------------ */
+/* ---------------- CONFIG ---------------- */
 const ORS_KEY = "YOUR_OPENROUTESERVICE_KEY"
 
 /* ---------- PIN FACTORY ---------- */
@@ -54,7 +62,10 @@ const HomePage = () => {
   const [foodPoints, setFoodPoints] = useState([])
   const [selected, setSelected] = useState(null)
   const [userLocation, setUserLocation] = useState([12.9716, 77.5946])
-  const [routes, setRoutes] = useState(null)
+
+  const [routeCoords, setRouteCoords] = useState([])
+  const [routeInfo, setRouteInfo] = useState(null)
+  const [mode, setMode] = useState("driving-car")
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -71,46 +82,36 @@ const HomePage = () => {
     })
   }, [])
 
-  const getRoutes = async (fp) => {
+  /* -------- FETCH ROUTE -------- */
+  const fetchRoute = async (fp, travelMode) => {
     const [lat, lng] = userLocation
     const [fpLng, fpLat] = fp.location.coordinates
 
-    const modes = ["driving-car", "foot-walking", "cycling-regular"]
-
-    const results = await Promise.all(
-      modes.map(mode =>
-        axios.post(
-          `https://api.openrouteservice.org/v2/directions/${mode}`,
-          {
-            coordinates: [
-              [lng, lat],
-              [fpLng, fpLat],
-            ],
-          },
-          {
-            headers: {
-              Authorization: ORS_KEY,
-              "Content-Type": "application/json",
-            },
-          }
-        )
-      )
+    const res = await axios.post(
+      `https://api.openrouteservice.org/v2/directions/${travelMode}`,
+      {
+        coordinates: [
+          [lng, lat],
+          [fpLng, fpLat],
+        ],
+      },
+      {
+        headers: {
+          Authorization: ORS_KEY,
+          "Content-Type": "application/json",
+        },
+      }
     )
 
-    setRoutes({
-      drive: results[0].data.routes[0].summary,
-      walk: results[1].data.routes[0].summary,
-      bike: results[2].data.routes[0].summary,
-    })
-  }
+    const geometry = res.data.routes[0].geometry.coordinates
+    const summary = res.data.routes[0].summary
 
-  const openGoogleMaps = () => {
-    const [lat, lng] = userLocation
-    const [fpLng, fpLat] = selected.location.coordinates
-    window.open(
-      `https://www.google.com/maps/dir/${lat},${lng}/${fpLat},${fpLng}`,
-      "_blank"
-    )
+    // convert to leaflet format
+    const leafletCoords = geometry.map(([lng, lat]) => [lat, lng])
+
+    setRouteCoords(leafletCoords)
+    setRouteInfo(summary)
+    setMode(travelMode)
   }
 
   return (
@@ -121,19 +122,31 @@ const HomePage = () => {
         <MapContainer center={userLocation} zoom={13} className="h-full w-full">
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
+          {/* USER MARKER */}
+          <Marker position={userLocation} />
+
+          {/* FOOD POINTS */}
           {foodPoints.map((fp) => (
             <Marker
               key={fp._id}
-              position={[fp.location.coordinates[1], fp.location.coordinates[0]]}
+              position={[
+                fp.location.coordinates[1],
+                fp.location.coordinates[0],
+              ]}
               icon={getPin(fp.stockStatus)}
               eventHandlers={{
                 click: () => {
                   setSelected(fp)
-                  getRoutes(fp)
+                  fetchRoute(fp, "driving-car")
                 },
               }}
             />
           ))}
+
+          {/* ROUTE LINE */}
+          {routeCoords.length > 0 && (
+            <Polyline positions={routeCoords} color="#16a34a" weight={5} />
+          )}
         </MapContainer>
 
         {/* SIDEBAR */}
@@ -145,7 +158,10 @@ const HomePage = () => {
                   <h2 className="text-lg font-bold text-green-700 flex items-center gap-2">
                     <MapPin /> {selected.name}
                   </h2>
-                  <button onClick={() => setSelected(null)}>
+                  <button onClick={() => {
+                    setSelected(null)
+                    setRouteCoords([])
+                  }}>
                     <X />
                   </button>
                 </div>
@@ -159,20 +175,51 @@ const HomePage = () => {
 
                 <div className="flex items-center gap-2">
                   <Clock />
-                  {formatTime(selected.timings?.from)} – {formatTime(selected.timings?.to)}
+                  {formatTime(selected.timings?.from)} –{" "}
+                  {formatTime(selected.timings?.to)}
                 </div>
 
-                {routes && (
-                  <div className="space-y-2 text-sm">
-                    <RouteRow icon={<Car />} label="Drive" data={routes.drive} />
-                    <RouteRow icon={<Footprints />} label="Walk" data={routes.walk} />
-                    <RouteRow icon={<Bike />} label="Bike" data={routes.bike} />
+                {/* ROUTE INFO */}
+                {routeInfo && (
+                  <div className="bg-green-50 p-3 rounded-lg space-y-2 text-sm">
+                    <p>
+                      Distance:{" "}
+                      <strong>
+                        {(routeInfo.distance / 1000).toFixed(2)} km
+                      </strong>
+                    </p>
+                    <p>
+                      ETA:{" "}
+                      <strong>
+                        {Math.round(routeInfo.duration / 60)} mins
+                      </strong>
+                    </p>
                   </div>
                 )}
 
-                <Button onClick={openGoogleMaps} className="w-full bg-green-600">
-                  Open in Google Maps
-                </Button>
+                {/* MODE SWITCH */}
+                <div className="grid grid-cols-3 gap-2">
+                  <Button
+                    variant={mode === "driving-car" ? "default" : "outline"}
+                    onClick={() => fetchRoute(selected, "driving-car")}
+                  >
+                    <Car />
+                  </Button>
+
+                  <Button
+                    variant={mode === "foot-walking" ? "default" : "outline"}
+                    onClick={() => fetchRoute(selected, "foot-walking")}
+                  >
+                    <Footprints />
+                  </Button>
+
+                  <Button
+                    variant={mode === "cycling-regular" ? "default" : "outline"}
+                    onClick={() => fetchRoute(selected, "cycling-regular")}
+                  >
+                    <Bike />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -183,13 +230,3 @@ const HomePage = () => {
 }
 
 export default HomePage
-
-/* ---------- ROUTE ROW ---------- */
-const RouteRow = ({ icon, label, data }) => (
-  <div className="flex items-center gap-3">
-    {icon}
-    <span className="font-medium">{label}:</span>
-    <span>{(data.distance / 1000).toFixed(1)} km</span>
-    <span>{Math.round(data.duration / 60)} mins</span>
-  </div>
-)
