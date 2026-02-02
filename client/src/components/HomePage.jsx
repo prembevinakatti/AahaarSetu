@@ -82,6 +82,8 @@ const HomePage = () => {
     })
   }, [])
 
+  
+
   /* -------- FETCH ROUTE -------- */
   const fetchRoute = async (fp, travelMode) => {
     const [lat, lng] = userLocation
